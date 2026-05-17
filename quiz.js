@@ -1,68 +1,69 @@
-const readline = require('readline');
+const quizContainer = document.getElementById('quiz-container');
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
+// Event listener for the start button
+document.getElementById('start-btn')?.addEventListener('click', startQuiz);
 
-function askQuestion(query) {
-    return new Promise(resolve => rl.question(query, resolve));
+function startQuiz() {
+    askQuestion(
+        "Question 1: Do you prefer studying the Earth or space?",
+        "Earth",
+        "Space",
+        (choice) => {
+            if (choice === 'A') {
+                handleEarthPath();
+            } else {
+                handleSpacePath();
+            }
+        }
+    );
 }
 
-async function startQuiz() {
-    console.log("Welcome to the Interactive Quiz!\n");
-    
-    // Question 1: The initial fork in the road
-    console.log("Question 1: Do you prefer studying the Earth or space?");
-    console.log("A) Earth");
-    console.log("B) Space");
-    let answer1 = await askQuestion("Your answer (A or B): ");
-    answer1 = answer1.trim().toUpperCase();
-    console.log("-".repeat(30));
-
-    // Branching Logic based on Answer 1
-    if (answer1 === "A") {
-        // Path A: Earth sciences
-        console.log("You chose Earth! Let's narrow it down.");
-        console.log("Question 2: Are you more interested in earthquakes or oceans?");
-        console.log("A) Earthquakes and seismology");
-        console.log("B) Oceans and marine life");
-        let answer2 = await askQuestion("Your answer (A or B): ");
-        answer2 = answer2.trim().toUpperCase();
-        
-        console.log("-".repeat(30));
-        if (answer2 === "A") {
-            console.log("Result: You should look into Geophysics or Seismology!");
-        } else if (answer2 === "B") {
-            console.log("Result: Oceanography sounds like a great fit for you.");
-        } else {
-            console.log("Invalid choice. Ending Earth path.");
+function handleEarthPath() {
+    askQuestion(
+        "Question 2: Are you more interested in earthquakes or oceans?",
+        "Earthquakes and seismology",
+        "Oceans and marine life",
+        (choice) => {
+            if (choice === 'A') {
+                displayResult("Result: You should look into Geophysics or Seismology!");
+            } else {
+                displayResult("Result: Oceanography sounds like a great fit for you.");
+            }
         }
-
-    } else if (answer1 === "B") {
-        // Path B: Space sciences
-        console.log("You chose Space! Let's look closer.");
-        console.log("Question 2: Do you prefer studying planets or stars?");
-        console.log("A) Planets and solar systems");
-        console.log("B) Stars, galaxies, and deep space");
-        let answer2 = await askQuestion("Your answer (A or B): ");
-        answer2 = answer2.trim().toUpperCase();
-        
-        console.log("-".repeat(30));
-        if (answer2 === "A") {
-            console.log("Result: Planetary Geology or Astronomy might be your calling.");
-        } else if (answer2 === "B") {
-            console.log("Result: Astrophysics seems perfect for you!");
-        } else {
-            console.log("Invalid choice. Ending Space path.");
-        }
-
-    } else {
-        console.log("Invalid input. Please restart the quiz and choose A or B.");
-    }
-
-    rl.close();
+    );
 }
 
-// Execute the function
-startQuiz();
+function handleSpacePath() {
+    askQuestion(
+        "Question 2: Do you prefer studying planets or stars?",
+        "Planets and solar systems",
+        "Stars, galaxies, and deep space",
+        (choice) => {
+            if (choice === 'A') {
+                displayResult("Result: Planetary Geology or Astronomy might be your calling.");
+            } else {
+                displayResult("Result: Astrophysics seems perfect for you!");
+            }
+        }
+    );
+}
+
+// Helper function to render a question and two option buttons
+function askQuestion(questionText, optionA, optionB, callback) {
+    quizContainer.innerHTML = `
+        <p><strong>${questionText}</strong></p>
+        <button id="btn-a" class="quiz-btn">A) ${optionA}</button>
+        <button id="btn-b" class="quiz-btn">B) ${optionB}</button>
+    `;
+
+    document.getElementById('btn-a').addEventListener('click', () => callback('A'));
+    document.getElementById('btn-b').addEventListener('click', () => callback('B'));
+}
+
+// Helper function to display the final outcome
+function displayResult(resultText) {
+    quizContainer.innerHTML = `
+        <h3>${resultText}</h3>
+        <button id="start-btn" class="quiz-btn" onclick="startQuiz()">Take Quiz Again</button>
+    `;
+}
